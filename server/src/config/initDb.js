@@ -2,6 +2,9 @@ const pool = require('./database');
 require('dotenv').config();
 
 const initSQL = `
+-- 启用 pgcrypto 扩展（提供 gen_random_uuid）
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 -- 用户表
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
