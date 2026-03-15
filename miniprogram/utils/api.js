@@ -1,10 +1,13 @@
-const app = getApp();
-
 const BASE_URL = 'http://localhost:3000';
+
+function getToken() {
+  const app = getApp();
+  return (app && app.globalData && app.globalData.token) || wx.getStorageSync('token') || '';
+}
 
 function request(url, method, data, header = {}) {
   return new Promise((resolve, reject) => {
-    const token = app.globalData.token || wx.getStorageSync('token');
+    const token = getToken();
     wx.request({
       url: BASE_URL + url,
       method,
@@ -17,10 +20,16 @@ function request(url, method, data, header = {}) {
       success(res) {
         if (res.statusCode === 401) {
           wx.removeStorageSync('token');
-          app.globalData.token = null;
-          app.login().then(() => {
-            request(url, method, data, header).then(resolve).catch(reject);
-          }).catch(reject);
+          const app = getApp();
+          if (app && app.globalData) app.globalData.token = null;
+          const loginApp = getApp();
+          if (loginApp && loginApp.login) {
+            loginApp.login().then(() => {
+              request(url, method, data, header).then(resolve).catch(reject);
+            }).catch(reject);
+          } else {
+            reject(new Error('未登录'));
+          }
           return;
         }
         resolve(res.data);
@@ -49,7 +58,7 @@ module.exports = {
   // 文件上传
   uploadFile(url, filePath, formData = {}) {
     return new Promise((resolve, reject) => {
-      const token = app.globalData.token || wx.getStorageSync('token');
+      const token = getToken();
       wx.uploadFile({
         url: BASE_URL + url,
         filePath,
