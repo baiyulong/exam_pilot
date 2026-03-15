@@ -25,7 +25,7 @@
     <view wx:else class="flex justify-between items-center">
       <view>
         <view class="text-md text-bold">{{selectedFile.name}}</view>
-        <view class="text-sm text-gray">{{(selectedFile.size / 1024).toFixed(1)}} KB</view>
+        <view class="text-sm text-gray">{{selectedFileSize}} KB</view>
       </view>
       <view class="bp-tag bp-tag-blue" bindtap="chooseFile">重选</view>
     </view>

@@ -6,6 +6,7 @@ Page({
     inputMode: 'text',
     text: '',
     selectedFile: null,
+    selectedFileSize: '0',
     filePath: '',
     title: '',
     choiceCount: 10,
@@ -54,6 +55,7 @@ Page({
         const file = res.tempFiles[0];
         this.setData({
           selectedFile: file,
+          selectedFileSize: (file.size / 1024).toFixed(1),
           filePath: file.path,
         });
       },
