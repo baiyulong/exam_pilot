@@ -1,0 +1,7 @@
+.subject-item {
+  padding: 20rpx 0;
+}
+
+.stat-item {
+  padding: 16rpx 0;
+}

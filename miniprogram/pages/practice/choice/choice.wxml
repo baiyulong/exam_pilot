@@ -1,0 +1,68 @@
+<!--选择题练习页-->
+<view class="page">
+  <!--顶部信息栏-->
+  <view class="flex justify-between items-center mb-md">
+    <view class="text-lg text-bold">综合知识</view>
+    <view class="flex items-center">
+      <view class="bp-tag">{{currentIndex + 1}} / {{questions.length}}</view>
+      <view class="bp-tag ml-sm" wx:if="{{countdown > 0}}">{{countdownText}}</view>
+    </view>
+  </view>
+  <view class="divider"></view>
+
+  <view wx:if="{{loading}}" class="loading">加载题目中...</view>
+
+  <!--答题卡视图-->
+  <view wx:if="{{showAnswerCard}}" class="bp-card">
+    <view class="bp-card-title">/ 答题卡</view>
+    <view class="answer-grid">
+      <view wx:for="{{questions}}" wx:key="id"
+        class="answer-cell {{userAnswers[index] ? 'answer-cell-done' : ''}} {{currentIndex === index ? 'answer-cell-current' : ''}}"
+        bindtap="jumpTo" data-index="{{index}}">{{index + 1}}</view>
+    </view>
+    <view class="mt-md text-sm text-gray">
+      已答 {{answeredCount}} / {{questions.length}} 题
+    </view>
+    <button class="bp-btn bp-btn-primary bp-btn-block mt-md" bindtap="toggleAnswerCard">返回答题</button>
+  </view>
+
+  <!--题目内容-->
+  <view wx:if="{{!showAnswerCard && questions.length > 0}}">
+    <view class="bp-card">
+      <view class="text-sm text-gray mb-sm">第 {{currentIndex + 1}} 题 · {{currentQuestion.category || '综合知识'}}</view>
+      <view class="text-md text-bold">{{currentQuestion.content}}</view>
+
+      <!--选项列表-->
+      <view class="mt-lg">
+        <view wx:for="{{currentQuestion.options}}" wx:key="label"
+          class="option-row {{userAnswers[currentIndex] === item.label ? 'option-selected' : ''}} {{submitted && item.label === currentQuestion.correct_answer ? 'option-correct' : ''}} {{submitted && userAnswers[currentIndex] === item.label && item.label !== currentQuestion.correct_answer ? 'option-wrong' : ''}}"
+          bindtap="selectOption" data-label="{{item.label}}">
+          <view class="option-label">{{item.label}}</view>
+          <view class="option-text">{{item.text}}</view>
+        </view>
+      </view>
+
+      <!--答案解析（提交后显示）-->
+      <view wx:if="{{submitted}}" class="mt-lg">
+        <view class="divider"></view>
+        <view class="text-sm text-bold {{userAnswers[currentIndex] === currentQuestion.correct_answer ? 'text-blue' : 'text-red'}}">
+          {{userAnswers[currentIndex] === currentQuestion.correct_answer ? '✓ 回答正确' : '✗ 回答错误'}}
+        </view>
+        <view class="text-sm text-blue mt-sm">正确答案: {{currentQuestion.correct_answer}}</view>
+        <view class="text-sm text-gray mt-sm">{{currentQuestion.explanation}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!--底部操作栏-->
+  <view class="bottom-bar flex items-center" style="gap: 16rpx;">
+    <button class="bp-btn bp-btn-sm" bindtap="prevQuestion" disabled="{{currentIndex <= 0}}">上一题</button>
+    <button class="bp-btn bp-btn-sm" bindtap="toggleAnswerCard">答题卡</button>
+    <view class="flex-1"></view>
+    <button wx:if="{{!submitted}}" class="bp-btn bp-btn-sm bp-btn-primary" bindtap="nextQuestion">
+      {{currentIndex < questions.length - 1 ? '下一题' : '交卷'}}
+    </button>
+    <button wx:if="{{submitted && currentIndex < questions.length - 1}}" class="bp-btn bp-btn-sm bp-btn-blue bp-btn-primary" bindtap="nextQuestion">下一题</button>
+    <button wx:if="{{!submitted}}" class="bp-btn bp-btn-sm bp-btn-primary" bindtap="submitAll">交卷</button>
+  </view>
+</view>

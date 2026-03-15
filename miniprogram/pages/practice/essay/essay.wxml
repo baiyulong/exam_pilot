@@ -1,0 +1,99 @@
+<!--论文写作练习页-->
+<view class="page">
+  <view class="flex justify-between items-center mb-md">
+    <view class="text-lg text-bold">论文写作</view>
+    <view class="bp-tag" wx:if="{{countdown > 0}}">{{countdownText}}</view>
+  </view>
+  <view class="divider"></view>
+
+  <view wx:if="{{loading}}" class="loading">加载题目中...</view>
+
+  <!--选题阶段-->
+  <view wx:if="{{!selectedTopic && !loading}}">
+    <view class="bp-card">
+      <view class="bp-card-title">/ 选择论文题目（4选1）</view>
+
+      <view wx:for="{{topics}}" wx:key="id" class="topic-item" bindtap="selectTopic" data-index="{{index}}">
+        <view class="flex items-center">
+          <view class="topic-radio {{topicIndex === index ? 'topic-radio-selected' : ''}}">
+            {{topicIndex === index ? '●' : ''}}
+          </view>
+          <view class="ml-sm flex-1">
+            <view class="text-md text-bold">题目 {{index + 1}}</view>
+            <view class="text-sm mt-sm">{{item.content}}</view>
+          </view>
+        </view>
+        <view class="divider-thin"></view>
+      </view>
+
+      <button class="bp-btn bp-btn-primary bp-btn-block mt-lg" bindtap="confirmTopic" disabled="{{topicIndex < 0}}">确认选题</button>
+    </view>
+  </view>
+
+  <!--写作阶段-->
+  <view wx:if="{{selectedTopic}}">
+    <view class="bp-card">
+      <view class="bp-card-title">/ 论文题目</view>
+      <view class="text-md text-bold">{{selectedTopic.content}}</view>
+      <view wx:if="{{selectedTopic.essay_requirements}}" class="text-sm text-gray mt-md" style="white-space: pre-wrap;">{{selectedTopic.essay_requirements}}</view>
+    </view>
+
+    <!--摘要-->
+    <view class="bp-card">
+      <view class="bp-card-title flex justify-between">
+        <text>/ 摘要</text>
+        <text class="text-sm {{abstractCount >= 300 && abstractCount <= 400 ? 'text-blue' : 'text-red'}}">{{abstractCount}} 字 (300-400)</text>
+      </view>
+      <textarea class="bp-textarea" style="min-height: 240rpx;" placeholder="请输入论文摘要（300-400字）..." value="{{abstract}}" bindinput="onAbstractInput" maxlength="500" />
+    </view>
+
+    <!--正文-->
+    <view class="bp-card">
+      <view class="bp-card-title flex justify-between">
+        <text>/ 正文</text>
+        <text class="text-sm {{contentCount >= 2000 && contentCount <= 2500 ? 'text-blue' : contentCount > 2500 ? 'text-red' : 'text-gray'}}">{{contentCount}} 字 (2000-2500)</text>
+      </view>
+
+      <!--结构框架提示-->
+      <view wx:if="{{selectedTopic.essay_template}}" class="text-sm text-gray mb-md" style="white-space: pre-wrap; border-left: 4rpx solid #2563EB; padding-left: 16rpx;">{{selectedTopic.essay_template}}</view>
+
+      <textarea class="bp-textarea" style="min-height: 600rpx;" placeholder="请输入论文正文（2000-2500字）..." value="{{content}}" bindinput="onContentInput" maxlength="3000" />
+    </view>
+
+    <!--AI批改结果-->
+    <view wx:if="{{reviewResult}}" class="bp-card">
+      <view class="bp-card-title">/ AI批改结果</view>
+      <view class="text-2xl text-bold text-center mb-md {{reviewResult.total_score >= 45 ? 'text-blue' : 'text-red'}}">
+        {{reviewResult.total_score}} / 75
+      </view>
+
+      <view wx:for="{{reviewResult.dimensions}}" wx:key="name" class="mb-md">
+        <view class="flex justify-between mb-sm">
+          <text class="text-sm text-bold">{{item.name}}</text>
+          <text class="text-sm">{{item.score}} / 15</text>
+        </view>
+        <view class="bp-progress bp-progress-blue">
+          <view class="bp-progress-bar" style="width: {{item.score / 15 * 100}}%"></view>
+        </view>
+        <view class="text-sm text-gray mt-sm">{{item.comment}}</view>
+      </view>
+
+      <view class="divider"></view>
+      <view class="text-sm text-bold mb-sm">总评</view>
+      <view class="text-sm text-gray">{{reviewResult.overall_comment}}</view>
+
+      <view wx:if="{{reviewResult.suggestions}}" class="mt-md">
+        <view class="text-sm text-bold mb-sm">改进建议</view>
+        <view wx:for="{{reviewResult.suggestions}}" wx:key="index" class="text-sm text-gray mb-sm">{{index + 1}}. {{item}}</view>
+      </view>
+    </view>
+
+    <!--底部操作-->
+    <view class="bottom-bar flex" style="gap: 16rpx;">
+      <button class="bp-btn flex-1" bindtap="saveDraft">保存草稿</button>
+      <button class="bp-btn bp-btn-blue bp-btn-primary flex-1" bindtap="aiReview" disabled="{{reviewing}}">
+        {{reviewing ? 'AI批改中...' : 'AI批改'}}
+      </button>
+    </view>
+  </view>
+</view>

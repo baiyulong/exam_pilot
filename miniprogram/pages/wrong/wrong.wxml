@@ -1,0 +1,46 @@
+<!--错题本页-->
+<view class="page">
+  <view class="page-title">错题本</view>
+
+  <!--分类筛选-->
+  <scroll-view scroll-x class="mb-md" style="white-space: nowrap;">
+    <view class="bp-tag {{filter === '' ? 'bp-tag-active' : ''}}" style="display: inline-flex;" bindtap="setFilter" data-cat="">全部</view>
+    <view wx:for="{{categories}}" wx:key="*this"
+      class="bp-tag {{filter === item ? 'bp-tag-active bp-tag-blue' : 'bp-tag-blue'}}"
+      style="display: inline-flex;"
+      bindtap="setFilter" data-cat="{{item}}">{{item}}</view>
+  </scroll-view>
+
+  <view class="divider"></view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <view wx:elif="{{items.length === 0}}" class="empty">
+    <view class="empty-text">暂无错题 ✓</view>
+  </view>
+
+  <view wx:else>
+    <view class="bp-card" wx:for="{{items}}" wx:key="id">
+      <view class="flex justify-between items-center mb-sm">
+        <view class="bp-tag bp-tag-blue">{{item.category}}</view>
+        <view class="text-sm text-red">错 {{item.wrong_count}} 次</view>
+      </view>
+      <view class="text-md text-bold mt-sm">{{item.content}}</view>
+
+      <!--选择题选项-->
+      <view wx:if="{{item.type === 'choice' && item.options}}" class="mt-md">
+        <view wx:for="{{item.options}}" wx:for-item="opt" wx:key="label" class="text-sm mb-sm">
+          <text class="{{opt.label === item.correct_answer ? 'text-blue text-bold' : ''}}">{{opt.label}}. {{opt.text}}</text>
+        </view>
+        <view class="divider-thin"></view>
+        <view class="text-sm text-blue">正确答案: {{item.correct_answer}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.explanation}}</view>
+      </view>
+
+      <!--案例题-->
+      <view wx:if="{{item.type === 'case'}}" class="mt-md">
+        <view class="text-sm text-gray">{{item.case_background}}</view>
+      </view>
+    </view>
+  </view>
+</view>

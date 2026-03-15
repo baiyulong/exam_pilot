@@ -1,0 +1,52 @@
+<!--题库详情页-->
+<view class="page">
+  <view class="page-title">{{bank.title || '题库详情'}}</view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <view wx:else>
+    <view class="flex justify-between items-center mb-md">
+      <view>
+        <text class="text-sm text-gray">共{{bank.question_count}}题</text>
+        <text class="text-sm text-gray ml-sm">来源: {{bank.source_type}}</text>
+      </view>
+      <button class="bp-btn bp-btn-sm bp-btn-danger" bindtap="deleteBank">删除</button>
+    </view>
+
+    <!--按类型筛选-->
+    <view class="flex mb-md" style="gap: 16rpx;">
+      <view class="bp-tag {{filter === '' ? 'bp-tag-active' : ''}}" bindtap="setFilter" data-type="">全部</view>
+      <view class="bp-tag {{filter === 'choice' ? 'bp-tag-active' : ''}}" bindtap="setFilter" data-type="choice">选择题</view>
+      <view class="bp-tag {{filter === 'case' ? 'bp-tag-active' : ''}}" bindtap="setFilter" data-type="case">案例题</view>
+      <view class="bp-tag {{filter === 'essay' ? 'bp-tag-active' : ''}}" bindtap="setFilter" data-type="essay">论文</view>
+    </view>
+
+    <view class="divider"></view>
+
+    <!--题目列表-->
+    <view class="bp-card" wx:for="{{filteredQuestions}}" wx:key="id">
+      <view class="flex justify-between items-center mb-sm">
+        <view class="bp-tag bp-tag-blue">{{item.type === 'choice' ? '选择题' : item.type === 'case' ? '案例分析' : '论文'}}</view>
+        <view class="bp-tag">{{item.category}}</view>
+      </view>
+      <view class="text-md mt-sm">{{item.content}}</view>
+
+      <!--选择题选项-->
+      <view wx:if="{{item.type === 'choice' && item.options}}" class="mt-md">
+        <view wx:for="{{item.options}}" wx:for-item="opt" wx:key="label" class="option-item mb-sm">
+          <text class="{{opt.label === item.correct_answer ? 'text-blue text-bold' : ''}}">{{opt.label}}. {{opt.text}}</text>
+        </view>
+        <view class="divider-thin"></view>
+        <view class="text-sm mt-sm">
+          <text class="text-bold text-blue">答案: {{item.correct_answer}}</text>
+        </view>
+        <view class="text-sm text-gray mt-sm">{{item.explanation}}</view>
+      </view>
+    </view>
+
+    <!--开始练习-->
+    <view class="bottom-bar flex" style="gap: 20rpx;">
+      <button class="bp-btn bp-btn-primary flex-1" bindtap="startPractice">开始练习</button>
+    </view>
+  </view>
+</view>

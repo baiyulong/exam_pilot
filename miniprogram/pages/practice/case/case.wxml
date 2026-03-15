@@ -1,0 +1,79 @@
+<!--案例分析练习页-->
+<view class="page">
+  <view class="flex justify-between items-center mb-md">
+    <view class="text-lg text-bold">案例分析</view>
+    <view class="flex items-center">
+      <view class="bp-tag">已选 {{selectedCount}} / 3 题</view>
+      <view class="bp-tag ml-sm" wx:if="{{countdown > 0}}">{{countdownText}}</view>
+    </view>
+  </view>
+  <view class="divider"></view>
+
+  <view wx:if="{{loading}}" class="loading">加载题目中...</view>
+
+  <view wx:else>
+    <!--选题区（5道大题列表）-->
+    <view wx:if="{{!examStarted}}" class="bp-card">
+      <view class="bp-card-title">/ 选择题目（1道必答 + 4选2）</view>
+      <view class="text-sm text-gray mb-md">第1题为必答题，请从第2-5题中选择2道作答</view>
+
+      <view wx:for="{{questions}}" wx:key="id" class="case-item" bindtap="toggleSelect" data-index="{{index}}">
+        <view class="flex justify-between items-center">
+          <view class="flex items-center">
+            <view class="case-checkbox {{selectedQuestions[index] ? 'case-checkbox-checked' : ''}} {{index === 0 ? 'case-checkbox-locked' : ''}}">
+              {{selectedQuestions[index] ? '✓' : ''}}
+            </view>
+            <view class="ml-sm">
+              <view class="text-md text-bold">第 {{index + 1}} 题 {{index === 0 ? '（必答）' : ''}}</view>
+              <view class="text-sm text-gray mt-sm">{{item.category}} · 约25分</view>
+            </view>
+          </view>
+        </view>
+        <view class="text-sm mt-sm case-preview">{{item.case_background ? item.case_background.substring(0, 80) + '...' : item.content.substring(0, 80) + '...'}}</view>
+        <view class="divider-thin"></view>
+      </view>
+
+      <button class="bp-btn bp-btn-primary bp-btn-block mt-lg" bindtap="startExam" disabled="{{selectedCount !== 3}}">
+        开始答题 ({{selectedCount}}/3)
+      </button>
+    </view>
+
+    <!--答题区-->
+    <view wx:if="{{examStarted}}">
+      <view class="flex mb-md" style="gap: 12rpx;">
+        <view wx:for="{{activeQuestions}}" wx:key="id"
+          class="bp-tag {{activeIndex === index ? 'bp-tag-active' : ''}}"
+          bindtap="switchQuestion" data-index="{{index}}">第{{item.originalIndex + 1}}题</view>
+      </view>
+
+      <view class="bp-card">
+        <!--案例背景-->
+        <view class="bp-card-title">/ 案例背景</view>
+        <view class="text-md case-bg">{{activeQuestion.case_background || activeQuestion.content}}</view>
+
+        <view class="divider"></view>
+
+        <!--问题列表-->
+        <view class="bp-card-title">/ 问题</view>
+        <view wx:for="{{activeQuestion.case_questions || []}}" wx:key="index" class="mb-lg">
+          <view class="text-md text-bold mb-sm">问题 {{index + 1}}: {{item}}</view>
+          <textarea class="bp-textarea" placeholder="请输入你的答案..." value="{{caseAnswers[activeIndex + '_' + index] || ''}}" bindinput="onCaseAnswerInput" data-qi="{{activeIndex}}" data-pi="{{index}}" />
+        </view>
+
+        <!--提交后显示参考答案-->
+        <view wx:if="{{submitted}}" class="mt-lg">
+          <view class="divider"></view>
+          <view class="bp-card-title">/ 参考答案</view>
+          <view class="text-sm text-gray">{{activeQuestion.correct_answer || activeQuestion.explanation}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!--底部操作栏-->
+  <view wx:if="{{examStarted}}" class="bottom-bar flex" style="gap: 16rpx;">
+    <button class="bp-btn bp-btn-sm flex-1" bindtap="prevActive" disabled="{{activeIndex <= 0}}">上一题</button>
+    <button class="bp-btn bp-btn-sm bp-btn-primary flex-1" wx:if="{{activeIndex < activeQuestions.length - 1}}" bindtap="nextActive">下一题</button>
+    <button class="bp-btn bp-btn-sm bp-btn-primary flex-1" wx:if="{{activeIndex === activeQuestions.length - 1 && !submitted}}" bindtap="submitCase">交卷</button>
+  </view>
+</view>

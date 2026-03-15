@@ -1,0 +1,93 @@
+<!--首页 - 工程蓝图风格-->
+<view class="page">
+  <!--标题区-->
+  <view class="page-title">ARCH · EXAM</view>
+  <view class="text-sm text-gray mb-lg">软考高级 · 系统架构设计师备考系统</view>
+
+  <!--学习概况卡片-->
+  <view class="bp-card">
+    <view class="bp-card-title">/ 学习概况</view>
+    <view class="flex justify-between mt-md">
+      <view class="stat-item text-center flex-1">
+        <view class="text-2xl text-bold">{{stats.total_practiced || 0}}</view>
+        <view class="text-sm text-gray mt-sm">已练习</view>
+      </view>
+      <view class="stat-item text-center flex-1">
+        <view class="text-2xl text-bold text-blue">{{stats.accuracy || 0}}%</view>
+        <view class="text-sm text-gray mt-sm">正确率</view>
+      </view>
+      <view class="stat-item text-center flex-1">
+        <view class="text-2xl text-bold text-red">{{stats.wrong_count || 0}}</view>
+        <view class="text-sm text-gray mt-sm">错题</view>
+      </view>
+      <view class="stat-item text-center flex-1">
+        <view class="text-2xl text-bold">{{stats.bank_count || 0}}</view>
+        <view class="text-sm text-gray mt-sm">题库</view>
+      </view>
+    </view>
+  </view>
+
+  <!--考试科目-->
+  <view class="bp-card">
+    <view class="bp-card-title">/ 考试科目</view>
+
+    <view class="subject-item" bindtap="goToPractice" data-type="choice">
+      <view class="flex justify-between items-center">
+        <view>
+          <view class="text-lg text-bold">综合知识</view>
+          <view class="text-sm text-gray mt-sm">75道选择题 · 150分钟 · 满分75</view>
+        </view>
+        <view class="bp-tag bp-tag-blue">选择题</view>
+      </view>
+      <view class="divider-thin"></view>
+    </view>
+
+    <view class="subject-item" bindtap="goToPractice" data-type="case">
+      <view class="flex justify-between items-center">
+        <view>
+          <view class="text-lg text-bold">案例分析</view>
+          <view class="text-sm text-gray mt-sm">5选3 · 90分钟 · 满分75</view>
+        </view>
+        <view class="bp-tag bp-tag-blue">案例题</view>
+      </view>
+      <view class="divider-thin"></view>
+    </view>
+
+    <view class="subject-item" bindtap="goToPractice" data-type="essay">
+      <view class="flex justify-between items-center">
+        <view>
+          <view class="text-lg text-bold">论文写作</view>
+          <view class="text-sm text-gray mt-sm">4选1 · 120分钟 · 2500字</view>
+        </view>
+        <view class="bp-tag bp-tag-blue">论文</view>
+      </view>
+    </view>
+  </view>
+
+  <!--快捷入口-->
+  <view class="bp-card">
+    <view class="bp-card-title">/ 快捷入口</view>
+    <view class="flex mt-md" style="gap: 20rpx;">
+      <button class="bp-btn bp-btn-primary flex-1" bindtap="goToPractice" data-type="choice">继续刷题</button>
+      <button class="bp-btn bp-btn-blue flex-1" bindtap="goToGenerate">AI生成题库</button>
+    </view>
+    <view class="flex mt-md" style="gap: 20rpx;">
+      <button class="bp-btn flex-1" bindtap="goToWrong">错题本</button>
+      <button class="bp-btn flex-1" bindtap="goToBank">我的题库</button>
+    </view>
+  </view>
+
+  <!--考点进度-->
+  <view class="bp-card" wx:if="{{stats.category_stats && stats.category_stats.length > 0}}">
+    <view class="bp-card-title">/ 考点掌握</view>
+    <view wx:for="{{stats.category_stats}}" wx:key="category" class="mt-md">
+      <view class="flex justify-between mb-sm">
+        <text class="text-sm">{{item.category}}</text>
+        <text class="text-sm text-gray">{{item.correct}}/{{item.total}}</text>
+      </view>
+      <view class="bp-progress bp-progress-blue">
+        <view class="bp-progress-bar" style="width: {{item.total > 0 ? (item.correct / item.total * 100) : 0}}%"></view>
+      </view>
+    </view>
+  </view>
+</view>

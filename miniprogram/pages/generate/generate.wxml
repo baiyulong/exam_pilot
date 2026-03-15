@@ -1,0 +1,86 @@
+<!--AI生成题库页-->
+<view class="page">
+  <view class="page-title">AI 生成题库</view>
+
+  <!--输入方式选择-->
+  <view class="flex mb-md" style="gap: 16rpx;">
+    <view class="bp-tag {{inputMode === 'text' ? 'bp-tag-active' : ''}}" bindtap="switchMode" data-mode="text">粘贴文本</view>
+    <view class="bp-tag {{inputMode === 'file' ? 'bp-tag-active' : ''}}" bindtap="switchMode" data-mode="file">上传文件</view>
+  </view>
+
+  <!--文本输入-->
+  <view wx:if="{{inputMode === 'text'}}" class="bp-card">
+    <view class="bp-card-title">/ 输入文档内容</view>
+    <textarea class="bp-textarea" style="min-height: 300rpx;" placeholder="粘贴学习资料文本内容..." value="{{text}}" bindinput="onTextInput" maxlength="10000"></textarea>
+    <view class="text-sm text-gray text-right mt-sm">{{text.length || 0}} / 10000</view>
+  </view>
+
+  <!--文件上传-->
+  <view wx:if="{{inputMode === 'file'}}" class="bp-card">
+    <view class="bp-card-title">/ 上传文档</view>
+    <view wx:if="{{!selectedFile}}" class="text-center p-md">
+      <button class="bp-btn bp-btn-block" bindtap="chooseFile">选择文件（PDF/DOCX/TXT）</button>
+      <view class="text-sm text-gray mt-sm">最大10MB</view>
+    </view>
+    <view wx:else class="flex justify-between items-center">
+      <view>
+        <view class="text-md text-bold">{{selectedFile.name}}</view>
+        <view class="text-sm text-gray">{{(selectedFile.size / 1024).toFixed(1)}} KB</view>
+      </view>
+      <view class="bp-tag bp-tag-blue" bindtap="chooseFile">重选</view>
+    </view>
+  </view>
+
+  <!--生成设置-->
+  <view class="bp-card">
+    <view class="bp-card-title">/ 生成设置</view>
+
+    <!--题库名称-->
+    <view class="mb-md">
+      <view class="text-sm text-bold mb-sm">题库名称</view>
+      <input class="bp-input" placeholder="输入题库名称（选填）" value="{{title}}" bindinput="onTitleInput" />
+    </view>
+
+    <!--选择题数量-->
+    <view class="mb-md">
+      <view class="text-sm text-bold mb-sm">选择题数量</view>
+      <view class="flex" style="gap: 16rpx;">
+        <view wx:for="{{[5,10,15,20]}}" wx:key="*this"
+          class="bp-tag {{choiceCount === item ? 'bp-tag-active' : ''}}"
+          bindtap="setChoiceCount" data-count="{{item}}">{{item}}题</view>
+      </view>
+    </view>
+
+    <!--附加题型-->
+    <view class="mb-md">
+      <view class="text-sm text-bold mb-sm">附加题型</view>
+      <view class="flex" style="gap: 16rpx;">
+        <view class="bp-tag {{includeCase ? 'bp-tag-active' : ''}}" bindtap="toggleCase">案例分析</view>
+        <view class="bp-tag {{includeEssay ? 'bp-tag-active' : ''}}" bindtap="toggleEssay">论文题目</view>
+      </view>
+    </view>
+
+    <!--考点选择-->
+    <view class="mb-md">
+      <view class="text-sm text-bold mb-sm">考点方向</view>
+      <view class="flex flex-wrap">
+        <view wx:for="{{categories}}" wx:key="*this"
+          class="bp-tag {{selectedCategory === item ? 'bp-tag-active bp-tag-blue' : 'bp-tag-blue'}}"
+          bindtap="setCategory" data-cat="{{item}}">{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!--生成按钮-->
+  <view class="mt-lg">
+    <button class="bp-btn bp-btn-primary bp-btn-block bp-btn-lg" bindtap="generate" disabled="{{generating}}">
+      {{generating ? '生成中...' : '开始生成'}}
+    </button>
+    <view wx:if="{{generating}}" class="text-center mt-md">
+      <view class="bp-progress">
+        <view class="bp-progress-bar" style="width: {{progress}}%; transition: width 1s;"></view>
+      </view>
+      <view class="text-sm text-gray mt-sm">AI正在分析文档并生成题目，请稍候...</view>
+    </view>
+  </view>
+</view>

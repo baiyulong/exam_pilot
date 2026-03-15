@@ -1,0 +1,56 @@
+.option-row {
+  display: flex;
+  align-items: flex-start;
+  border: 2rpx solid #000000;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.option-label {
+  width: 48rpx;
+  height: 48rpx;
+  border: 2rpx solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.option-text {
+  flex: 1;
+  line-height: 48rpx;
+}
+
+.option-selected {
+  border-color: #2563EB;
+}
+
+.option-selected .option-label {
+  background-color: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+}
+
+.option-correct {
+  border-color: #2563EB !important;
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.option-correct .option-label {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+.option-wrong {
+  border-color: #DC2626 !important;
+  background-color: rgba(220, 38, 38, 0.05);
+}
+
+.option-wrong .option-label {
+  background-color: #DC2626 !important;
+  border-color: #DC2626 !important;
+  color: #FFFFFF !important;
+}

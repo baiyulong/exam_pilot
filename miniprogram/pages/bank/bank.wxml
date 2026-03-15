@@ -1,0 +1,24 @@
+<!--题库列表页-->
+<view class="page">
+  <view class="page-title">题库列表</view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <view wx:elif="{{banks.length === 0}}" class="empty">
+    <view class="empty-text">暂无题库</view>
+    <button class="bp-btn bp-btn-primary mt-lg" bindtap="goToGenerate">去AI生成</button>
+  </view>
+
+  <view wx:else>
+    <view class="bp-card" wx:for="{{banks}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <view class="flex justify-between items-center">
+        <view class="flex-1">
+          <view class="text-lg text-bold">{{item.title}}</view>
+          <view class="text-sm text-gray mt-sm">{{item.question_count}}题 · {{item.source_type === 'file' ? '文件生成' : '文本生成'}}</view>
+        </view>
+        <view class="bp-tag">{{item.question_count}}题</view>
+      </view>
+      <view class="text-sm text-gray mt-md">{{item.created_at}}</view>
+    </view>
+  </view>
+</view>
